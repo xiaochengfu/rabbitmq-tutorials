@@ -23,17 +23,26 @@ $connection->close();
  * 1. exchange为空
  * 2. 队列hello没有绑定exchange
  * 3. routing_key为hello,去掉routing_key或改名后，队列收不到消息
- *
+ */
+
+/**
  * 结论：
  * 1. exchange虽然为空字符，但是使用了rabbitmq内置的(AMQP default)
  * 2. 队列虽然没有用queue_bind()方式显示的绑定exchange,但内部其实是与内置的(AMQP default)交换机进行了绑定
  * 3. routing_key去掉或改名后收不到，是因为绑定到默认exchange时，routing_key必须和queue名称一致才有效
- *
+ * 4. 一个消息不能直接发给队列，是必须需要经过交换机的
+ */
+
+/**
  * 理论佐证：
- * rabbitmq manage 管理后台，默认的exchange详情页，Bindings这一栏内有说明
+ * 1. rabbitmq manage 管理后台，默认的exchange详情页，Bindings这一栏内有说明
  * Default exchange
  * The default exchange is implicitly bound to every queue, with a routing key equal to the queue name. It is not possible to explicitly bind to, or unbind from the default exchange. It also cannot be deleted.
- *
+ * 2. 官方文档：https://www.rabbitmq.com/tutorials/tutorial-one-python.html
+ * In RabbitMQ a message can never be sent directly to the queue, it always needs to go through an exchange.
+ */
+
+/**
  * 延伸知识：
  * 1. 默认的exchange无法显示的声明绑定队列或解绑队列，也无法删除该exchange
  * 2. 消息是发送给exchange的，由exchange通过路由routing_key分配到队列中
